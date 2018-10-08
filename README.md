@@ -19,6 +19,12 @@ var Config = {
       issue: '/issue',
       search: '/search',
       filter: '/filter'
+    },
+    monthsToLookBack: 6,
+    query: {
+      projects: 'INSERT COMMA-SEPARATED LIST OF JIRA PROJECTS HERE',
+      status: 'INSERT STATUSES OF INTEREST HERE',
+      fields: 'id,key,project,summary,issuetype,created,updated'
     }
   }
 };
