@@ -64,22 +64,25 @@ var Jira = (function() {
   
   // Returns JQL for the API call
   function getJQL(beforeDate) {
+    var filterDate = beforeDate || getReportDate();
     var jql = "";
-    jql += "project+in+(INFR,ENGSTRAT,MAF,DTH,DATAENG,INTINFRA,LRN,MOB,MI,ARTOO,SALT,TNT)";
-    jql += "+AND+status+in+(Requested,+%22Ready+for+development%22,+%22In+Development%22,+%22To+Do%22,";
-    jql += "+Open,+In_Progress,+%22Ready+for+QA%22,+New,+%22QA+Ready%22,+%22In+Review%22,+%22Ready+for+Acceptance%22,";
-    jql += "+%22Ready+For+Review%22,+%22Not+Yet+Started%22,+Started,+%22Waiting+for+deployment%22,+%22Not+ready%22,";
-    jql += "+%22READY+FOR+DEPLOYMENT%22,+%22In+QA%22,+%22Waiting+for+Info%22,+%22In+Progress%22)";
-    jql += "+AND+created+%3C+" + beforeDate;
+    jql += "project+in+(" + Config.jira.query.projects + ")";
+    jql += "+AND+status+in+(" + Config.jira.query.status + ")";
+    jql += "+AND+created+%3C+" + filterDate;
     jql += "+ORDER+BY+project+ASC,+created+ASC";
     return jql;
+  }
+
+  // Returns the date until which the report should gather data
+  function getReportDate() {
+    return DateUtil.formatDateLocal(DateUtil.addMonths(new Date(), -Config.jira.monthsToLookBack, 1));
   }
   
   // Returns the URI query for the APP call
   function getQuery(jql, startAt, maxResults) {
     var query = "";
     query += "?jql=" + jql;
-    query += "&fields=id,key,project,summary,issuetype,created,updated";
+    query += "&fields=" + Config.jira.query.fields;
     query += "&startAt=" + startAt;
     query += "&maxResults=" + maxResults;
     return query;
